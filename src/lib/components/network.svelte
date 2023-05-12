@@ -5,6 +5,7 @@
     dragValues,
     insertElAt,
   } from "$lib/stores/dragstate";
+  import DragMenu from "./DragMenu.svelte";
   import Chain from "./chain.svelte";
 
   const chainDebounce = (ms) => {
@@ -21,6 +22,12 @@
   const cd0 = chainDebounce(100);
 
   function dragStart(e: CustomEvent<{ cidx: number; midx: number }>) {
+    if (e.detail.newEl) {
+      const { newEl, copy, type } = e.detail;
+      console.log(newEl, copy, type);
+      return;
+    }
+
     const { cidx, midx } = e.detail;
     dragValues.update((s) => ({
       ...s,
@@ -52,6 +59,7 @@
   function dragEnd() {
     cd0.clear();
     $dragValues.dragging = false;
+    if ($dragValues.drag.cidx == null || $dragValues.drag.midx == null) return;
     chains.update((s) => {
       const v = s[$dragValues.drag.cidx].modules[$dragValues.drag.midx];
       s[$dragValues.drag.cidx].modules[$dragValues.drag.midx] = {
@@ -60,6 +68,10 @@
       };
       return s;
     });
+    $dragValues.drag = {
+      cidx: null,
+      midx: null,
+    };
   }
 </script>
 
@@ -82,6 +94,8 @@ enter - cidx: {$dragValues.enter.cidx} cidx: {$dragValues.enter.midx}
     />
   {/each}
 </div>
+
+<DragMenu on:dragstart={dragStart} />
 
 <style>
   .grabbing {

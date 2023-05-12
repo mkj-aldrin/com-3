@@ -4,6 +4,7 @@
   import { flip } from "svelte/animate";
   import { createEventDispatcher } from "svelte";
   import Module from "./module.svelte";
+  import ModuleMenu from "./ModuleMenu.svelte";
 
   export let idx: number;
   export let modules: { type: string; id: number }[] = [];
@@ -45,6 +46,7 @@
         on:dragstart={dragstart}
         on:dragenter={dragEnter}
       />
+      <ModuleMenu />
     </div>
   {/each}
 </div>
